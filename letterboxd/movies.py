@@ -8,25 +8,27 @@ cur = conn.cursor()
 
 # Make some fresh tables using executescript()
 cur.executescript('''
-DROP TABLE IF EXISTS Director;
-DROP TABLE IF EXISTS Genre;
-DROP TABLE IF EXISTS Actor;
+DROP TABLE IF EXISTS Directors;
+DROP TABLE IF EXISTS Genres;
+DROP TABLE IF EXISTS Actors;
 DROP TABLE IF EXISTS Film;
+DROP TABLE IF EXISTS Classification;
+DROP TABLE IF EXISTS Principals;
 
 
-CREATE TABLE Director (
+CREATE TABLE Directors (
     id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    name   TEXT UNIQUE
+    director   TEXT UNIQUE
 );
 
-CREATE TABLE Actor (
+CREATE TABLE Actors (
     id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    name   TEXT UNIQUE
+    actor   TEXT UNIQUE
 );
 
-CREATE TABLE Genre (
+CREATE TABLE Genres (
     id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    name   TEXT UNIQUE
+    genre   TEXT UNIQUE
 );
 
 
@@ -35,10 +37,22 @@ CREATE TABLE Film (
         AUTOINCREMENT UNIQUE,
     title TEXT  UNIQUE,
     director_id  INTEGER, 
-    genre_id INTEGER,
-    actor_id INTEGER,
-    date DATE, year INTEGER, rating INTEGER
+    date DATE, year INTEGER, rate DECIMAL,numVotes INTEGER,
+     image TEXT
 );
+
+CREATE TABLE Classification(
+    genre_id INTEGER,
+    film_id INTEGER,
+    PRIMARY KEY(genre_id,film_id)
+);
+
+CREATE TABLE Principals(
+    actor_id INTEGER,
+    film_id INTEGER,
+    PRIMARY KEY(actor_id,film_id)
+)
+
 ''')
 
 
@@ -63,48 +77,66 @@ for line in datafile:
     
     url=data[-1]
     js=get_json(url)
+    actors=list()
+    genres=list()
     try:
         director=js["director"][0]["name"]
+ 
+        for actor in js["actors"]:
+            actors.append(actor["name"])
+
+        for genre in js["genre"]:
+            genres.append(genre)
     except:
         continue
-    try: #no todas las peliculas tienen actores
-        actor=js["actors"][0]["name"]
-    except:
-        continue
-    try:
-        genre=js["genre"][0]
     
-        if len(js["genre"])>1:
-            genre=genre+"/"+js["genre"][1]
+    rate=js["aggregateRating"]["ratingValue"]
+    numVotes=js["aggregateRating"]["ratingCount"]
+
+    try:
+        image=js["image"]
     except:
-        continue
-    rating=js["aggregateRating"]["ratingValue"]
+        image=None
     
     #title
     
-    name = re.findall("{:},(.*),{:},{:}".format(date,year,url),line)[0]
+    title = re.findall("{:},(.*),{:},{:}".format(date,year,url),line)[0].strip()
 
+    print(date, title, year, director,actors[0],genres[0],rate,numVotes)
 
-    print(date, name, year, director,actor,genre,rating)
-
-    cur.execute('''INSERT OR IGNORE INTO Director (name) 
+    cur.execute('''INSERT OR IGNORE INTO Directors (director) 
         VALUES ( ? )''', ( director, ) )
-    cur.execute('SELECT id FROM Director WHERE name = ? ', (director, ))
+    cur.execute('SELECT id FROM Directors WHERE director = ? ', (director, ))
     director_id = cur.fetchone()[0]
 
-    cur.execute('''INSERT OR IGNORE INTO Genre (name) 
+    genres_id=list()
+    for genre in genres:
+        cur.execute('''INSERT OR IGNORE INTO Genres (genre) 
         VALUES ( ? )''', ( genre, ) )
-    cur.execute('SELECT id FROM Genre WHERE name = ? ', (genre, ))
-    genre_id = cur.fetchone()[0]
+        cur.execute('SELECT id FROM Genres WHERE genre = ? ', (genre, ))
+        genres_id.append( cur.fetchone()[0])
 
-    cur.execute('''INSERT OR IGNORE INTO Actor (name) 
+        actors_id=list()
+    for actor in actors:
+        cur.execute('''INSERT OR IGNORE INTO Actors (actor) 
         VALUES ( ? )''', ( actor, ) )
-    cur.execute('SELECT id FROM Actor WHERE name = ? ', (actor, ))
-    actor_id = cur.fetchone()[0]
+        cur.execute('SELECT id FROM Actors WHERE actor = ? ', (actor, ))
+        actors_id.append(cur.fetchone()[0])
     
     cur.execute('''INSERT OR REPLACE INTO Film
-        (title, director_id,genre_id,actor_id, year,date,rating) 
-        VALUES ( ?, ?, ?, ?, ?, ?, ?)''', 
-        ( name, director_id,genre_id,actor_id, year, date,rating ) )
+        (title, director_id, year,date,rate,numVotes,image) 
+        VALUES ( ?, ?, ?, ?, ?, ?,?)''', 
+        ( title, director_id,year, date,rate,numVotes,image) )
+    
+    cur.execute('''SELECT id FROM Film WHERE title=?''',(title,) )
+    film_id=cur.fetchone()[0]
 
+    for genre_id in genres_id:
+        cur.execute('''INSERT OR IGNORE INTO Classification
+        (genre_id,film_id) VALUES (?,?)''',(genre_id,film_id))
+
+    for actor_id in actors_id:
+        cur.execute('''INSERT OR IGNORE INTO Principals
+        (actor_id,film_id) VALUES (?,?)''',(actor_id,film_id))
+        
     conn.commit()
