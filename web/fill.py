@@ -1,10 +1,40 @@
 import sqlite3
-html=open("plantilla.html","r")
+html=open("plantilla","r")
 text=html.read()
 html.close()
 
-def image(link):
-    schema="<article><img src='{:}'/></a></article>".format(link)
+def image(link,title,director,rate):
+    if rate is not None:
+        rate=round(rate)
+    else:
+        rate=0
+    l=["","","","",""]
+    for ii in range(5):
+        if ii==rate-1:
+            l[ii]="CHECKED"  
+    schema='''
+    <article class='image'>	
+    <img class="image__img" src='{l}' alt='{tt}'>
+    <div class="image__overlay image__overlay--primary">
+    <div class="image__title">{tt}</div>
+    <p class="image__description">
+    Dir: {d}
+    </p>
+    <div class="rate">
+    <input type="radio" id="{tt}5" name="{tt}" value="5" {l4} />
+    <label for="star5" title="text">5 stars</label>
+    <input type="radio" id="{tt}4" name="{tt}" value="4" {l3}/>
+    <label for="star4" title="text">4 stars</label>
+    <input type="radio" id="{tt}3" name="{tt}" value="3" {l2}/>
+    <label for="star3" title="text">3 stars</label>
+    <input type="radio" id="{tt}2" name="{tt}" value="2" {l1}/>
+    <label for="star2" title="text">2 stars</label>
+    <input type="radio" id="{tt}1" name="{tt}" value="1" {l0}/>
+    <label for="star1" title="text">1 star</label>
+    </div>
+    </div>
+    </article>
+    '''.format(l=link,d=director,l0=l[0],l1=l[1],l2=l[2],l3=l[3],l4=l[4],tt=title)
     return schema
 
 def gen_tabs(number):
@@ -24,7 +54,7 @@ films=900
 
 n_films=0
 for id in range(0,films):
-    cur.execute("SELECT image FROM Film WHERE id=?",(id,))
+    cur.execute('''SELECT Film.image FROM Film WHERE id=?''',(id,))
     link=cur.fetchone()
     if link==None:
         continue
@@ -55,17 +85,22 @@ text=html.read()
 
 tt=1
 for id in range(0,films):
-    cur.execute("SELECT image FROM Film WHERE id=? ",(id,))
-    link=cur.fetchone()
-    if link==None:
+    cur.execute('''SELECT Film.image,Film.title,Directors.director,Film.rate 
+    FROM Film JOIN Directors 
+    ON Film.director_id=Directors.id AND Film.id=?''',(id,))
+    
+    data=cur.fetchone()
+    if data==None:
         continue
+    
     tab=(tt/ranger)
     if tab==int(tab):
         tab=int(tab)-1
     else:
         tab=int(tab)
     tt+=1
-    im=image(link[0])
+    
+    im=image(data[0],data[1],data[2],data[3])
     images[tab]+=im+"\n"
 
 for tab in range(1,tabs+1):

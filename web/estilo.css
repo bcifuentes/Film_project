@@ -48,7 +48,8 @@ background-image: url(imagenes/city2.jpg);
 
 /* Style the buttons that are used to open the tab content */
 .tab button {
-  background-color: inherit;
+    background-color: inherit;
+    color:#fff;
   float: left;
   border: none;
   outline: none;
@@ -56,15 +57,54 @@ background-image: url(imagenes/city2.jpg);
   padding: 14px 16px;
   transition: 0.3s;
 }
+/* rate */
+.rate {
+    float: left;
+    height: 25px;
+    padding: 0 0px;
+}
+.rate:not(:checked) > input {
+    position:absolute;
+    top:-9999px;
+}
+.rate:not(:checked) > label {
+    float:right;
+    width:1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:20px;
+    color:#ccc;
+}
+.rate:not(:checked) > label:before {
+    content: '★';
+}
+.rate > input:checked ~ label {
+    color: #ffc700;    
+}
+.rate:not(:checked) > label:hover,
+.rate:not(:checked) > label:hover ~ label {
+    color: #deb217;  
+}
+.rate > input:checked + label:hover,
+.rate > input:checked + label:hover ~ label,
+.rate > input:checked ~ label:hover,
+.rate > input:checked ~ label:hover ~ label,
+.rate > label:hover ~ input:checked ~ label {
+    color: #c59b08;
+}
+
 
 /* Change background color of buttons on hover */
 .tab button:hover {
-  background-color: #ddd;
+    background-color: #ddd;
+        color:#000;
 }
 
 /* Create an active/current tablink class */
 .tab button.active {
   background-color: #ccc;
+        color:#000;
 }
 
 /* Style the tab content */
@@ -206,6 +246,9 @@ h1:link {
 	cursor: pointer;
 	text-decoration: none;  /* para que no subraye los vínculos en los titulares*/ 
 }
+h2{
+          color:#fff;
+}
 
 a { /* para los links de las referencias */
     text-decoration: none;
@@ -262,7 +305,17 @@ a { /* para los links de las referencias */
             
 }
 
+iframe {
+    min-width: 460px;
+    height: 400px;
+    filter: opacity(70%);
+    break-inside: avoid;
+    page-break-inside: avoid;	    
+}
 
+iframe:hover{
+    filter: opacity(100%);
+}
         
 article { /* cuadros para las imagenes */
             background:#fff;
@@ -270,14 +323,77 @@ article { /* cuadros para las imagenes */
             border:1px solid #ccc;
             margin:0 0 20px 0;
             text-align: center;
-            max-width: 100%;
+            max-width: 150%;
             filter: opacity(70%);
 
             /*Evitamos que se corte al cambiar de columna*/
             break-inside: avoid;
-            page-break-inside: avoid;         
-       
-        }
+            page-break-inside: avoid;           
+}
+
+
+.image {
+    position: relative;
+
+}
+
+.image__img {
+    display: block;
+    width: 100%;
+}
+
+.image__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+    font-family: 'Quicksand', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.25s;
+}
+
+.image__overlay--blur {
+    backdrop-filter: blur(5px);
+}
+
+.image__overlay--primary {
+    background: #B24FE3;
+}
+
+.image__overlay > * {
+    transform: translateY(20px);
+    transition: transform 0.25s;
+}
+
+.image__overlay:hover {
+    opacity: 1;
+}
+
+.image__overlay:hover > * {
+    transform: translateY(0);
+}
+
+.image__title {
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.image__description {
+    font-size: 0.55em;
+    margin-left: 0.1em;
+    margin-top: 0.25em;
+}
+
+
+
+
 .article2 { /* cuadros para los textos */
             background:none;
             border-radius:0px;
@@ -323,6 +439,8 @@ article img {
             transition: .5s ease;
             filter: opacity(100%);
         }
+
+	
         figure {
             padding:1rem;
             box-sizing: border-box;

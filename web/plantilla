@@ -15,7 +15,7 @@
 
   <li class="li3"><a   target="_self" href="index.html">HOME</a></li><!-- acomoda los botones verticalmente -->
   <li class="li3"><a   target="_self" href="lugares.html">Explore</a></li>
-  <li class="li3"><a   target="_self" href="historia.html">This year</a></li>
+  <li class="li3"><a   target="_self" href="stats.html">STATS</a></li>
 
     
 </ul>
