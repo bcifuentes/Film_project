@@ -36,7 +36,10 @@ except:
     
 for id in range(ID):
     if id < M: continue
-    
+    cur.execute("SELECT numVotes FROM Film WHERE id=?",(id,))
+    N=cur.fetchone()
+    if N is None:continue
+    if int(N[0])<50000:continue
     cur.execute("SELECT imdb_id FROM Film WHERE id=?",(id,))
     ids=cur.fetchone()
     if ids is None: continue
@@ -86,5 +89,3 @@ for id in range(ID):
         cur.execute('''INSERT OR IGNORE INTO Principals 
         (name_id,film_id) VALUES (?,?)''',(name_id,id))
     conn.commit()
-
-    

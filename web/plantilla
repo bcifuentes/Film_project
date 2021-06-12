@@ -14,7 +14,6 @@
 <ul class="ul3"><!-- asigna el estilo "ul3" a la vista del menu para que sea vertical -->
 
   <li class="li3"><a   target="_self" href="index.html">HOME</a></li><!-- acomoda los botones verticalmente -->
-  <li class="li3"><a   target="_self" href="lugares.html">Explore</a></li>
   <li class="li3"><a   target="_self" href="stats.html">STATS</a></li>
 
     
@@ -25,12 +24,12 @@
 <div class="tab">
   %BOTONES
 </div>        
-        
-<section id="galeria4">
+%ORG
+<section id="galeria6">
   
   %TABS
          
-           
+   </section>      
     </main>
 </body>
 

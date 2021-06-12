@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Stats</title>
+    <link href="estilo.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+    <main>
+
+<ul>
+
+  <li><a   target="_self" href="index.html">HOME</a></li>
+  <li><a   target="_self" href="your_films.html">Your films</a></li>
+</ul>
+        
+       
+<h1>Stats</h1>
+
+<section id="galeria4">
+<article class='article2'> %WELCOME</article>
+</setion>
+
+<section id="galeria2">
+  
+  <iframe  class="frameshort" src="mapa.html"></iframe>
+<h2>World Map</h2>
+ 
+  <iframe  class="frameshort" src="bargnr.html"></iframe>
+  <h2>Genre Data</h2>
+</section>
+
+       <h2>Your Favorite Films</h2>
+    <section id="galeria5">
+      %FAVORITES
+
+    </section> 
+ 
+
+
+<section id="galeria4">               
+       <h2>Contries data</h2>
+     <iframe  class="framelong" src="bargeo.html"></iframe>
+
+   </section>
+
+   
+    </main>
+
+</body>
+
+</html>
